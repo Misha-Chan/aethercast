@@ -1,5 +1,5 @@
 /* ============================================================
-    Hostaka Video — /video
+   صفحة Hostaka Video — /video (تصفح + مشغّل بطريقة يوتيوب)
    ============================================================ */
 body.page-video {background:var(--bg);color:var(--text);min-height:100vh;font-family:'Ubuntu','El Messiri',sans-serif;}
 body.page-video .topbar {
