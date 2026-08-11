@@ -35,7 +35,7 @@ function t(key, vars){
   if (vars) Object.keys(vars).forEach(function(k){ s = s.replace('{'+k+'}', vars[k]); });
   return s;
 }
-const TOKEN = localStorage.getItem('hostaka_token') || '';
+let TOKEN = localStorage.getItem('hostaka_token') || '';
 let ME = null;
 try { const stored = localStorage.getItem('hostaka_user'); if (stored) ME = JSON.parse(stored); } catch(e) {}
 
@@ -304,7 +304,24 @@ async function toggleSaveReel(id){
   }
 }
 
-loadReels();
+// إذا ما فيه توكن محلي، جرّب تسحبه بصمت من وسيط التحقق المركزي
+// (oauth.hostaka.fun) قبل ما نكمل — يغني عن الحاجة لرابط ?token= يدوي
+// بمعظم الحالات (المستخدم مسجّل دخول أصلاً بمكان ثاني بالمنظومة)
+async function pullOAuthSessionIfNeeded(){
+  if (TOKEN) return;
+  try {
+    const r = await fetch('https://oauth.hostaka.fun/api/token', { credentials: 'include' });
+    if (r.ok) {
+      const d = await r.json();
+      if (d && d.token) { TOKEN = d.token; localStorage.setItem('hostaka_token', TOKEN); }
+    }
+  } catch (e) {}
+}
+
+(async function startShort(){
+  await pullOAuthSessionIfNeeded();
+  loadReels();
+})();
 
 /* expose top-level functions for inline onclick handlers */
 try { window.esc = esc; } catch(e) {}

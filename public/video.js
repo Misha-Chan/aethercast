@@ -378,7 +378,22 @@ function renderEmptyVideos(){
   `;
 }
 
+// إذا ما فيه توكن محلي، جرّب تسحبه بصمت من وسيط التحقق المركزي
+// (oauth.hostaka.fun) قبل ما نكمل — يغني عن الحاجة لرابط ?token= يدوي
+// بمعظم الحالات (المستخدم مسجّل دخول أصلاً بمكان ثاني بالمنظومة)
+async function pullOAuthSessionIfNeeded(){
+  if (getToken()) return;
+  try {
+    const r = await fetch('https://oauth.hostaka.fun/api/token', { credentials: 'include' });
+    if (r.ok) {
+      const d = await r.json();
+      if (d && d.token) localStorage.setItem('hostaka_token', d.token);
+    }
+  } catch (e) {}
+}
+
 async function initVideoPage(){
+  await pullOAuthSessionIfNeeded();
   try {
     try{ ME = await apiFetch('/api/me'); }catch(e){ ME = null; }
     try {
