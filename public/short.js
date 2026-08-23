@@ -37,7 +37,6 @@ function t(key, vars){
 }
 let TOKEN = localStorage.getItem('hostaka_token') || '';
 let ME = null;
-try { const stored = localStorage.getItem('hostaka_user'); if (stored) ME = JSON.parse(stored); } catch(e) {}
 
 function esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 
@@ -320,6 +319,9 @@ async function pullOAuthSessionIfNeeded(){
 
 (async function startShort(){
   await pullOAuthSessionIfNeeded();
+  if (TOKEN) {
+    try { ME = await apiFetch('/api/me'); if (ME && ME.error) ME = null; } catch(e) { ME = null; }
+  }
   loadReels();
 })();
 
