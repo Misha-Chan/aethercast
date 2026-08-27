@@ -79,8 +79,16 @@
     return panel;
   }
 
+  // صفحة الريلز (page-short) واجهة ملء الشاشة، وأزرار الإعجاب/التعليق/
+  // المشاركة موجودة بنفس الزاوية بالضبط (أسفل يمين) — فما نعرض الزر فيها
+  // إطلاقاً، بحال ما تسوّي منصات الريلز الأخرى (تيك توك، إنستغرام...).
+  function shouldSkip() {
+    return document.body && document.body.classList.contains('page-short');
+  }
+
   function init() {
     if (document.getElementById('ecoSwitchBtn')) return; // تفادي التكرار لو انحقن السكربت أكثر من مرة
+    if (shouldSkip()) return;
     injectStyles();
 
     var overlay = document.createElement('div');
