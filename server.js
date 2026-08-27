@@ -136,6 +136,7 @@ async function fetchRecordMeta(req, res, fileName, kind) {
           meta.title = `${who} على ${SITE_NAME}`;
           meta.description = ogTruncate(rec.content) || DEFAULT_DESC;
           if (rec.image) meta.image = absUrl(req, rec.image);
+          else meta.image = `${HOSTAKA_API_BASE}/api/og-image?type=video&brand=aethercast&id=${encodeURIComponent(id)}`;
           if (rec.video) meta.video = absUrl(req, rec.video);
         }
       }
@@ -155,7 +156,47 @@ app.get('/video', (req, res) => fetchRecordMeta(req, res, 'video.html', 'video')
 app.get('/short', (req, res) => fetchRecordMeta(req, res, 'short.html', 'short'));
 
 app.get('/robots.txt', (req, res) => {
-  res.type('text/plain').send('User-agent: *\nAllow: /\n');
+  const origin = `https://${req.get('host')}`;
+  res.type('text/plain').send(`User-agent: *\nAllow: /\n\nSitemap: ${origin}/sitemap.xml\n`);
+});
+
+// ============================================================
+// sitemap.xml — aethercast (aethercast.hostaka.fun), part of the
+// Hostaka Ecosystem. Hostaka's video & reels platform. Dynamically
+// generated from the main Hostaka API (every public video record),
+// same pattern used by hostaka.fun/sitemap.xml, so Google can discover
+// and index this subdomain's content directly instead of waiting on
+// random crawling.
+// ============================================================
+app.get('/sitemap.xml', async (req, res) => {
+  try {
+    const origin = `https://${req.get('host')}`;
+    const urls = [];
+    const addUrl = (loc, lastmod, priority) => {
+      urls.push(`  <url><loc>${ogEscape(loc)}</loc>${lastmod ? `<lastmod>${new Date(lastmod).toISOString()}</lastmod>` : ''}<priority>${priority}</priority></url>`);
+    };
+
+    addUrl(`${origin}/video`, null, '1.0');
+
+    try {
+      const r = await fetch(`${HOSTAKA_API_BASE}/api/records`);
+      if (r.ok) {
+        const records = await r.json();
+        for (const rec of records) {
+          if (rec.video) addUrl(`${origin}/video?id=${encodeURIComponent(rec.id)}`, rec.created_at, '0.6');
+        }
+      }
+    } catch (e) { console.warn('sitemap: could not fetch records', e.message); }
+
+    res.type('application/xml').send(
+`<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+${urls.join('\n')}
+</urlset>`);
+  } catch (e) {
+    console.error('❌ sitemap generation failed:', e);
+    res.status(500).type('text/plain').send('sitemap generation failed');
+  }
 });
 
 // أي مسار غير معروف يرجع لفيد الفيديو (بدل 404 فاضي)
