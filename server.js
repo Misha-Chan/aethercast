@@ -105,6 +105,7 @@ function injectOG(html, meta) {
   tags += `  <meta name="twitter:title" content="${title}">\n`;
   tags += `  <meta name="twitter:description" content="${desc}">\n`;
   tags += `  <meta name="twitter:image" content="${image}">\n`;
+  tags += `  <script src="/ecosystem-switcher.js" defer></script>\n`;
 
   if (/<title>[\s\S]*?<\/title>/.test(html)) {
     return html.replace(/<title>[\s\S]*?<\/title>/, `<title>${title}</title>\n  ${tags}`);
