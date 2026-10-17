@@ -41,16 +41,16 @@ function t(key, vars){
   if (vars) Object.keys(vars).forEach(function(k){ s = s.replace('{'+k+'}', vars[k]); });
   return s;
 }
-// الوضع الداكن افتراضياً لزوار aethercast (هوية الثيم الداكنة) — يبقى محترماً
-// أي تفضيل محفوظ مسبقاً من بقية المنظومة عبر hostaka_theme.
-let currentTheme = localStorage.getItem('hostaka_theme') || 'dark';
+// aethercast هوية داكنة: الوضع الداكن افتراضياً (مفتاح مستقل عن بقية
+// المنظومة كي لا يورّث تفضيلاً فاتحاً من مواقع hostaka الأخرى).
+let currentTheme = localStorage.getItem('aethercast_theme') || 'dark';
 const THEME_ICON_DARK = `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>`;
 const THEME_ICON_LIGHT = `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>`;
 function setTheme(theme){
   const html = document.documentElement;
   if(theme==='dark') html.setAttribute('data-theme','dark'); else html.removeAttribute('data-theme');
   currentTheme = theme;
-  localStorage.setItem('hostaka_theme', theme);
+  localStorage.setItem('aethercast_theme', theme);
   // كان أيقونة الزر لا تتحدث أبداً على هذه الصفحة فتبقى دائماً على شكل الشمس
   // حتى لو كان الوضع الداكن فعلياً مُفعّلاً، ما يعطي انطباعاً بأن التبديل معطّل
   if (typeof setThemeIcon === 'function') setThemeIcon(theme === 'dark' ? THEME_ICON_DARK : THEME_ICON_LIGHT);
@@ -106,6 +106,40 @@ function verifiedBadge(){ return `<span class="badge-verified"><svg width="13" h
 let ME = null;
 let allVideos = [];
 let currentVideo = null;
+let vjsPlayer = null;
+
+// نهيّئ مشغّل Video.js (بدل عناصر التحكم الأصلية للمتصفح) بعد حقن الفيديو
+// في DOM. نتخلّص من النسخة السابقة أولاً لأننا نعيد بناء الواجهة عند كل فيديو.
+function disposeVideoPlayer(){
+  if(vjsPlayer){ try { vjsPlayer.dispose(); } catch(e){} vjsPlayer = null; }
+}
+function initVideoPlayer(){
+  disposeVideoPlayer();
+  const el = document.getElementById('acPlayer');
+  if(!el) return;
+  if(typeof videojs === 'undefined'){
+    // احتياطي: لو فشل تحميل مكتبة Video.js نرجع لعناصر التحكم الأصلية
+    el.setAttribute('controls', '');
+    try { el.play(); } catch(e){}
+    return;
+  }
+  vjsPlayer = videojs(el, {
+    controls: true,
+    autoplay: true,
+    preload: 'auto',
+    fluid: true,
+    responsive: true,
+    playsinline: true,
+    playbackRates: [0.5, 1, 1.25, 1.5, 2],
+    controlBar: {
+      pictureInPictureToggle: true,
+      remainingTimeDisplay: true,
+      volumePanel: { inline: false }
+    },
+    userActions: { hotkeys: true }
+  });
+  try { vjsPlayer.play(); } catch(e){}
+}
 
 function getIdFromUrl(){
   const params = new URLSearchParams(location.search);
@@ -171,7 +205,7 @@ function renderWatch(v){
     <div class="video-watch-layout">
       <div>
         <div class="video-player-wrap">
-          <video class="video-player" controls autoplay playsinline><source src="${esc(v.video)}" type="video/mp4"></video>
+          <video id="acPlayer" class="video-js vjs-aethercast vjs-big-play-centered" controls autoplay playsinline preload="auto"><source src="${esc(v.video)}" type="video/mp4"></video>
         </div>
         <div class="video-watch-title">${esc(stripHtmlV(v.content)) || t('untitled')}</div>
         <div class="video-watch-pubrow">
@@ -208,6 +242,7 @@ function renderWatch(v){
       </div>
     </div>
   `;
+  initVideoPlayer();
 }
 
 function renderVideoComments(comments, videoId){
@@ -329,6 +364,7 @@ function shortsShelfHtml(reelsSlice){
 
 function renderCombinedFeed(){
   const wrap = document.getElementById('videoPageWrap');
+  disposeVideoPlayer();
 
   if (feedTab === 'videos') {
     wrap.innerHTML = feedTabsHtml() + `<div class="video-grid">${allVideos.map(vgCardHtml).join('')}</div>`;
@@ -375,6 +411,7 @@ function renderCombinedFeed(){
 }
 
 function renderEmptyVideos(){
+  disposeVideoPlayer();
   document.getElementById('videoPageWrap').innerHTML = feedTabsHtml() + `
     <div class="video-empty">${VSVG.empty}<div>${t('noVideosYet')}</div></div>
   `;

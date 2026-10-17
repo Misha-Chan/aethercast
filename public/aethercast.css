@@ -205,9 +205,40 @@ body.page-video .shorts-shelf-title { font-weight: 600; }
    Watch page
    ============================================================ */
 body.page-video .video-player-wrap {
-  border: 1px solid var(--border); border-radius: 16px; box-shadow: var(--shadow);
+  display: block; border: 1px solid var(--border); border-radius: 16px;
+  box-shadow: var(--shadow); overflow: hidden; background: #000;
 }
 body.page-video .video-player { border-radius: 15px; }
+
+/* ---- Video.js skin → Turso aqua ---- */
+body.page-video .video-js { font-family: inherit; background: #000; }
+body.page-video .video-js .vjs-control-bar {
+  height: 3.4em; background: linear-gradient(to top, rgba(13, 19, 24, 0.95), rgba(13, 19, 24, 0.72));
+  backdrop-filter: blur(10px);
+}
+body.page-video .video-js .vjs-button > .vjs-icon-placeholder::before { color: #fff; }
+body.page-video .video-js .vjs-button:hover > .vjs-icon-placeholder::before,
+body.page-video .video-js .vjs-button:focus > .vjs-icon-placeholder::before { color: var(--ac-aqua); }
+body.page-video .video-js .vjs-play-progress,
+body.page-video .video-js .vjs-volume-level { background: var(--ac-aqua); }
+body.page-video .video-js .vjs-play-progress::before { color: var(--ac-aqua); }
+body.page-video .video-js .vjs-slider { background-color: rgba(255, 255, 255, 0.22); }
+body.page-video .video-js .vjs-load-progress,
+body.page-video .video-js .vjs-load-progress div { background: rgba(255, 255, 255, 0.35); }
+body.page-video .video-js .vjs-big-play-button {
+  width: 72px; height: 72px; line-height: 72px; border: 0; border-radius: 50%;
+  background: var(--ac-aqua); color: var(--ac-ink);
+  box-shadow: 0 12px 34px -8px rgba(79, 248, 210, 0.7);
+}
+body.page-video .video-js .vjs-big-play-button .vjs-icon-placeholder::before { line-height: 72px; color: var(--ac-ink); }
+body.page-video .video-js:hover .vjs-big-play-button,
+body.page-video .video-js .vjs-big-play-button:focus { background: var(--ac-aqua-hover); }
+body.page-video .video-js .vjs-current-time,
+body.page-video .video-js .vjs-duration,
+body.page-video .video-js .vjs-remaining-time { font-family: 'Geist Mono', monospace; }
+body.page-video .video-js .vjs-menu li.vjs-selected { background-color: var(--ac-aqua); color: var(--ac-ink); }
+body.page-video .video-js .vjs-menu li.vjs-selected:focus,
+body.page-video .video-js .vjs-menu li.vjs-selected:hover { background-color: var(--ac-aqua-hover); color: var(--ac-ink); }
 body.page-video .video-watch-title { font-weight: 700; font-size: 1.2rem; }
 body.page-video .video-watch-name { font-weight: 600; }
 body.page-video .video-watch-name:hover { color: var(--ac-aqua); }
