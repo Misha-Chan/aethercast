@@ -13,12 +13,44 @@ const app = express();
 const HOSTAKA_API_BASE = process.env.HOSTAKA_API_BASE || 'https://hostaka.fun';
 
 app.disable('x-powered-by');
-app.set('trust proxy', true);
+// عدد وكلاء البروكسي الموثوقين قبل الطلب مباشرةً خلف بروكسي Vercel (مو
+// `true` اللي يثق بأي X-Forwarded-For ويسمح بتزوير req.ip).
+app.set('trust proxy', 1);
+
+// رؤوس أمان أساسية على كل الردود (كانت غائبة تماماً).
+app.use((req, res, next) => {
+  res.setHeader('X-Content-Type-Options', 'nosniff');
+  res.setHeader('X-Frame-Options', 'SAMEORIGIN');
+  res.setHeader('Referrer-Policy', 'no-referrer');
+  res.setHeader('Cross-Origin-Opener-Policy', 'same-origin');
+  res.setHeader('Strict-Transport-Security', 'max-age=15552000; includeSubDomains');
+  next();
+});
+
+// ============================================================
+// حدّ معدّل بسيط لكل IP على مسارات /api/* (حماية أفضل-من-لا-شيء ضد
+// الاجتياح/الحلقات). in-memory لكل عملية، مثل orbithub بالضبط.
+// ============================================================
+const RATE_WINDOW_MS = 60 * 1000;
+const RATE_MAX = Number(process.env.RATE_LIMIT_MAX || 600);
+const rateBuckets = new Map();
+function apiRateLimit(req, res, next) {
+  const key = req.ip || 'unknown';
+  const now = Date.now();
+  let b = rateBuckets.get(key);
+  if (!b || now - b.start > RATE_WINDOW_MS) { b = { start: now, count: 0 }; rateBuckets.set(key, b); }
+  b.count += 1;
+  res.setHeader('X-RateLimit-Limit', RATE_MAX);
+  res.setHeader('X-RateLimit-Remaining', Math.max(0, RATE_MAX - b.count));
+  if (b.count > RATE_MAX) return res.status(429).json({ error: 'طلبات كثيرة، حاول لاحقاً' });
+  if (rateBuckets.size > 10000) rateBuckets.clear();
+  next();
+}
 
 // ============================================================
 // بروكسي /api/* — نفس أسلوب orbithub بالضبط
 // ============================================================
-app.use('/api', express.raw({ type: '*/*', limit: '10mb' }), async (req, res) => {
+app.use('/api', apiRateLimit, express.raw({ type: '*/*', limit: '10mb' }), async (req, res) => {
   try {
     const targetUrl = HOSTAKA_API_BASE + '/api' + req.url;
 
