@@ -1,0 +1,302 @@
+/* ============================================================
+   aethercast — Turso-inspired theme layer (loaded LAST, after
+   theme.css / shared.css / video.css / short.css).
+   Reskins aethercast.hostaka.fun into a dark, developer-tool
+   aesthetic: near-black canvas, subtle dot-grid + aurora glows,
+   glassy surfaces, mint→violet accent. Purely visual — it only
+   overrides tokens and restyles existing class names, so no
+   behaviour in video.js / short.js changes. Both themes stay
+   usable; dark is the intended showcase.
+   ============================================================ */
+
+/* ---------- tokens: brand accent (both themes) ---------- */
+:root,
+html {
+  --ac-1: #2fe6a8;          /* mint  */
+  --ac-2: #7c5cff;          /* violet */
+  --ac-gradient: linear-gradient(135deg, var(--ac-1), var(--ac-2));
+
+  --primary: #0f9b74;
+  --primary-h: #0c7f5e;
+  --primary-light: rgba(15, 155, 116, 0.10);
+  --primary-mid: rgba(15, 155, 116, 0.18);
+  --primary-border: rgba(15, 155, 116, 0.32);
+  --accent: #0f9b74;
+  --avatar-gradient: linear-gradient(145deg, #2fe6a8, #7c5cff);
+}
+
+/* ---------- tokens: dark canvas (Turso look) ---------- */
+[data-theme="dark"] {
+  --primary: var(--ac-1);
+  --primary-h: #5af0bd;
+  --primary-light: rgba(47, 230, 168, 0.12);
+  --primary-mid: rgba(47, 230, 168, 0.20);
+  --primary-border: rgba(47, 230, 168, 0.34);
+  --accent: var(--ac-1);
+
+  --black: #000000;
+  --dark: #05070a;
+  --bg: #05070a;
+  --card: #0b1016;
+  --border: rgba(255, 255, 255, 0.09);
+  --text: #e8eef6;
+  --muted: #8394a5;
+
+  --modal-bg: #0c1219;
+  --input-bg: #0c1219;
+  --topbar-bg: rgba(5, 7, 10, 0.72);
+  --post-bg: #0b1016;
+  --surface-elevated: #0f151c;
+
+  --mine-bg: linear-gradient(135deg, rgba(47, 230, 168, 0.22), rgba(124, 92, 255, 0.22));
+  --mine-border: rgba(47, 230, 168, 0.22);
+  --their-bg: #0b1016;
+  --their-border: rgba(255, 255, 255, 0.07);
+
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.5);
+  --shadow: 0 10px 30px rgba(0, 0, 0, 0.45);
+  --shadow-lg: 0 24px 60px rgba(0, 0, 0, 0.6);
+}
+
+::selection { background: rgba(47, 230, 168, 0.28); color: #fff; }
+
+/* ============================================================
+   Page canvas — dot grid + corner aurora glows (theme-aware)
+   ============================================================ */
+body.page-video,
+body.page-short {
+  background-color: #f6f8fa;
+  background-image:
+    radial-gradient(60% 44% at 10% -6%, rgba(15, 155, 116, 0.10), transparent 62%),
+    radial-gradient(52% 46% at 104% 108%, rgba(124, 92, 255, 0.10), transparent 58%),
+    radial-gradient(rgba(0, 0, 0, 0.04) 1px, transparent 1.4px);
+  background-size: 100% 100%, 100% 100%, 22px 22px;
+  background-attachment: fixed, fixed, fixed;
+}
+[data-theme="dark"] body.page-video,
+[data-theme="dark"] body.page-short {
+  background-color: #05070a;
+  background-image:
+    radial-gradient(60% 44% at 10% -6%, rgba(47, 230, 168, 0.14), transparent 62%),
+    radial-gradient(52% 46% at 104% 108%, rgba(124, 92, 255, 0.14), transparent 58%),
+    radial-gradient(rgba(255, 255, 255, 0.035) 1px, transparent 1.4px);
+}
+body.page-short,
+[data-theme="dark"] body.page-short { background-attachment: scroll, scroll, scroll; }
+
+/* Thin themed scrollbars (webkit) */
+body.page-video ::-webkit-scrollbar { width: 10px; height: 10px; }
+body.page-video ::-webkit-scrollbar-thumb {
+  background: rgba(128, 128, 128, 0.35); border-radius: 999px;
+  border: 2px solid transparent; background-clip: padding-box;
+}
+body.page-video ::-webkit-scrollbar-thumb:hover { background: rgba(47, 230, 168, 0.5); background-clip: padding-box; }
+
+/* ============================================================
+   Topbar — frosted glass with hairline (theme-aware bg)
+   ============================================================ */
+body.page-video .topbar {
+  height: 62px;
+  background: var(--topbar-bg);
+  border-bottom: 1px solid var(--border);
+  backdrop-filter: blur(20px) saturate(1.4);
+  -webkit-backdrop-filter: blur(20px) saturate(1.4);
+}
+body.page-video .topbar::after {
+  content: ""; position: absolute; left: 0; right: 0; bottom: -1px; height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(47, 230, 168, 0.5), rgba(124, 92, 255, 0.4), transparent);
+  opacity: 0.7;
+}
+body.page-video .back-btn,
+body.page-video .icon-btn {
+  border: 1px solid var(--border);
+  background: var(--primary-light);
+  color: var(--text);
+  transition: all var(--transition-fast);
+}
+body.page-video .back-btn:hover,
+body.page-video .icon-btn:hover {
+  border-color: var(--primary-border);
+  background: var(--primary-light);
+  color: var(--primary);
+  box-shadow: 0 0 0 4px rgba(47, 230, 168, 0.06);
+}
+[data-theme="dark"] body.page-video .brand-logo { filter: drop-shadow(0 0 12px rgba(47, 230, 168, 0.25)); }
+
+/* ============================================================
+   Feed tabs — segmented pill control
+   ============================================================ */
+body.page-video .feed-tabs {
+  display: inline-flex; gap: 4px; padding: 5px; margin-bottom: 22px;
+  background: rgba(128, 128, 128, 0.08);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  backdrop-filter: blur(8px);
+  max-width: 100%;
+}
+body.page-video .feed-tab {
+  padding: 8px 20px; border-radius: 999px; border: 1px solid transparent;
+  background: transparent; color: var(--muted); font-weight: 700; font-size: 0.85rem;
+  transition: all var(--transition-fast);
+}
+body.page-video .feed-tab:hover { color: var(--text); background: rgba(128, 128, 128, 0.12); }
+body.page-video .feed-tab.active {
+  background: var(--ac-gradient); border-color: transparent;
+  color: #04120d;
+  box-shadow: 0 6px 20px -6px rgba(47, 230, 168, 0.6), inset 0 0 0 1px rgba(255, 255, 255, 0.2);
+}
+body.page-video .feed-tab.active svg { color: #04120d; }
+
+/* ============================================================
+   Video grid cards
+   ============================================================ */
+body.page-video .video-grid { gap: 26px 18px; }
+body.page-video .vg-card { transition: transform var(--transition-base); }
+body.page-video .vg-card:hover { transform: translateY(-4px); }
+body.page-video .vg-thumb-wrap {
+  border-radius: 16px;
+  border: 1px solid var(--border);
+  box-shadow: 0 10px 30px -14px rgba(0, 0, 0, 0.55);
+  transition: border-color var(--transition-base), box-shadow var(--transition-base);
+}
+body.page-video .vg-card:hover .vg-thumb-wrap {
+  border-color: var(--primary-border);
+  box-shadow: 0 22px 50px -18px rgba(47, 230, 168, 0.35), 0 0 0 1px var(--primary-border);
+}
+body.page-video .vg-play svg {
+  width: 58px; height: 58px; padding: 16px; border-radius: 999px;
+  background: rgba(6, 9, 13, 0.55); border: 1px solid rgba(47, 230, 168, 0.5);
+  backdrop-filter: blur(6px); box-shadow: 0 8px 24px -8px rgba(47, 230, 168, 0.7);
+}
+body.page-video .vg-title { font-weight: 700; letter-spacing: 0.1px; }
+body.page-video .vg-avatar { box-shadow: 0 0 0 1px var(--border); }
+body.page-video .vg-sub .dot { background: var(--primary); }
+
+/* ============================================================
+   Shorts shelf
+   ============================================================ */
+body.page-video .shorts-shelf-head { font-weight: 700; letter-spacing: 0.3px; }
+body.page-video .shorts-shelf-head svg { color: var(--primary); filter: drop-shadow(0 0 8px rgba(47, 230, 168, 0.5)); }
+body.page-video .shorts-shelf-thumb-wrap {
+  border: 1px solid var(--border); border-radius: 16px;
+  transition: transform var(--transition-base), border-color var(--transition-base), box-shadow var(--transition-base);
+}
+body.page-video .shorts-shelf-card:hover .shorts-shelf-thumb-wrap {
+  transform: translateY(-4px); border-color: var(--primary-border);
+  box-shadow: 0 18px 40px -16px rgba(124, 92, 255, 0.4);
+}
+body.page-video .shorts-shelf-badge {
+  background: rgba(6, 9, 13, 0.6); border: 1px solid rgba(255, 255, 255, 0.12);
+  color: var(--ac-1);
+}
+
+/* ============================================================
+   Watch page
+   ============================================================ */
+body.page-video .video-player-wrap {
+  border: 1px solid var(--border); border-radius: 20px;
+  box-shadow: 0 30px 80px -30px rgba(47, 230, 168, 0.25), 0 0 0 1px var(--border);
+}
+body.page-video .video-player { border-radius: 19px; }
+body.page-video .video-watch-title { font-size: 1.22rem; letter-spacing: 0.1px; }
+body.page-video .video-watch-avatar { box-shadow: 0 0 0 2px rgba(47, 230, 168, 0.35); }
+body.page-video .video-watch-name:hover { color: var(--primary); }
+body.page-video .video-watch-desc {
+  background: rgba(128, 128, 128, 0.05);
+  border: 1px solid var(--border); border-radius: 16px;
+}
+body.page-video .vw-action-btn {
+  border: 1px solid var(--border);
+  background: rgba(128, 128, 128, 0.08);
+  transition: all var(--transition-fast);
+}
+body.page-video .vw-action-btn:hover {
+  border-color: var(--primary-border); background: var(--primary-light); color: var(--primary);
+}
+body.page-video .vw-action-btn.active {
+  border-color: var(--primary-border);
+  background: var(--primary-light); color: var(--primary);
+  box-shadow: 0 0 0 4px rgba(47, 230, 168, 0.06);
+}
+
+/* Up-next list */
+body.page-video .vun-thumb-wrap { border: 1px solid var(--border); border-radius: 12px; }
+body.page-video .vun-card { border-radius: 14px; padding: 6px; transition: background var(--transition-fast); }
+body.page-video .vun-card:hover { background: rgba(128, 128, 128, 0.10); }
+
+/* ============================================================
+   Comments
+   ============================================================ */
+body.page-video .video-comment-input-row input {
+  background: var(--input-bg);
+  border: 1px solid var(--border);
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+}
+body.page-video .video-comment-input-row input:focus {
+  border-color: var(--primary-border); box-shadow: 0 0 0 4px rgba(47, 230, 168, 0.08);
+}
+body.page-video .video-comment-input-row button {
+  background: var(--ac-gradient); color: #04120d;
+  box-shadow: 0 8px 22px -8px rgba(47, 230, 168, 0.7);
+}
+body.page-video .comment .c-avatar { box-shadow: 0 0 0 1px var(--border); }
+
+/* ============================================================
+   Toast + loader (theme-aware surfaces)
+   ============================================================ */
+body.page-video .toast {
+  background: var(--surface-elevated, var(--card)); color: var(--text);
+  border: 1px solid var(--border); border-radius: 14px;
+  backdrop-filter: blur(14px);
+  box-shadow: var(--shadow-lg);
+  padding: 12px 20px 12px 18px;
+}
+body.page-video .toast::before {
+  content: ""; position: absolute; inset-inline-start: 0; top: 20%; bottom: 20%;
+  width: 3px; border-radius: 999px; background: var(--ac-gradient);
+}
+body.page-video .toast.toast-error { border-color: rgba(255, 90, 80, 0.5); }
+body.page-video .toast.toast-error::before { background: var(--danger); }
+body.page-video .spinner {
+  border: 3px solid rgba(128, 128, 128, 0.25);
+  border-top-color: var(--ac-1);
+  border-right-color: var(--ac-2);
+}
+body.page-video .loader { background: var(--bg); }
+
+/* ============================================================
+   Shorts player page
+   ============================================================ */
+body.page-short .reel-act-circle {
+  background: rgba(255, 255, 255, 0.10);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+}
+body.page-short .reel-act-btn.liked .reel-act-circle {
+  background: rgba(47, 230, 168, 0.22); color: var(--ac-1);
+  border-color: rgba(47, 230, 168, 0.5);
+}
+body.page-short .reel-act-btn.save-btn.saved .reel-act-circle { color: var(--ac-1); border-color: rgba(47, 230, 168, 0.5); }
+body.page-short .reel-avatar { box-shadow: 0 0 0 2px rgba(47, 230, 168, 0.5); }
+body.page-short .comments-sheet {
+  background: #0b1016; border-top: 1px solid rgba(255, 255, 255, 0.09);
+}
+body.page-short .comments-head { border-bottom: 1px solid rgba(255, 255, 255, 0.09); }
+body.page-short .comments-input-row { border-top: 1px solid rgba(255, 255, 255, 0.09); }
+body.page-short .comments-input-row input { background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.09); }
+body.page-short .comments-input-row button { background: var(--ac-gradient); color: #04120d; }
+body.page-short .reply-btn:hover { color: var(--ac-1); }
+body.page-short .spinner { border: 3px solid rgba(255, 255, 255, 0.14); border-top-color: var(--ac-1); border-right-color: var(--ac-2); }
+
+/* ============================================================
+   Motion
+   ============================================================ */
+@keyframes ac-rise { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+body.page-video .video-grid > *,
+body.page-video .shorts-shelf-row { animation: ac-rise 0.45s cubic-bezier(0.16, 1, 0.3, 1) both; }
+
+@media (prefers-reduced-motion: reduce) {
+  body.page-video .vg-card,
+  body.page-video .shorts-shelf-thumb-wrap,
+  body.page-video .video-grid > *,
+  body.page-video .shorts-shelf-row { animation: none; transition: none; transform: none; }
+}
