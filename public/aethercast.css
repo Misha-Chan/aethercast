@@ -1,298 +1,303 @@
 /* ============================================================
-   aethercast — Turso-inspired theme layer (loaded LAST, after
-   theme.css / shared.css / video.css / short.css).
-   Reskins aethercast.hostaka.fun into a dark, developer-tool
-   aesthetic: near-black canvas, subtle dot-grid + aurora glows,
-   glassy surfaces, mint→violet accent. Purely visual — it only
-   overrides tokens and restyles existing class names, so no
-   behaviour in video.js / short.js changes. Both themes stay
-   usable; dark is the intended showcase.
+   aethercast — Turso (turso.tech) look & feel.
+   Loaded LAST, after theme.css / shared.css / video.css / short.css.
+
+   Palette lifted from turso.tech's own stylesheet:
+     bunker (canvas)  #0d1318
+     panel            #152029
+     panel-elevated   #1a232b
+     border           #283945
+     aqua (accent)    #4ff8d2   hover #7ffade   light #88ffe4
+     ink (on aqua)    #0d1318
+     muted            #8a97a1
+   Fonts: Inter (UI) + Geist Mono (labels/numbers), like Turso.
+   Flat, bordered, high-contrast — no coloured glows.
    ============================================================ */
 
-/* ---------- tokens: brand accent (both themes) ---------- */
-:root,
-html {
-  --ac-1: #2fe6a8;          /* mint  */
-  --ac-2: #7c5cff;          /* violet */
-  --ac-gradient: linear-gradient(135deg, var(--ac-1), var(--ac-2));
+/* ---------- accent tokens ---------- */
+:root {
+  --ac-aqua: #4ff8d2;
+  --ac-aqua-hi: #88ffe4;
+  --ac-aqua-hover: #7ffade;
+  --ac-ink: #0d1318;
 
-  --primary: #0f9b74;
-  --primary-h: #0c7f5e;
-  --primary-light: rgba(15, 155, 116, 0.10);
-  --primary-mid: rgba(15, 155, 116, 0.18);
-  --primary-border: rgba(15, 155, 116, 0.32);
-  --accent: #0f9b74;
-  --avatar-gradient: linear-gradient(145deg, #2fe6a8, #7c5cff);
+  --primary: #0e8f75;
+  --primary-h: #0b735e;
+  --primary-light: rgba(14, 143, 117, 0.10);
+  --primary-mid: rgba(14, 143, 117, 0.18);
+  --primary-border: rgba(14, 143, 117, 0.40);
+  --accent: #0e8f75;
+  --avatar-gradient: linear-gradient(145deg, #4ff8d2, #1ebca1);
 }
 
-/* ---------- tokens: dark canvas (Turso look) ---------- */
-[data-theme="dark"] {
-  --primary: var(--ac-1);
-  --primary-h: #5af0bd;
-  --primary-light: rgba(47, 230, 168, 0.12);
-  --primary-mid: rgba(47, 230, 168, 0.20);
-  --primary-border: rgba(47, 230, 168, 0.34);
-  --accent: var(--ac-1);
-
+/* ---------- light theme (Turso's white sections) ---------- */
+:root {
+  --bg: #ffffff;
   --black: #000000;
-  --dark: #05070a;
-  --bg: #05070a;
-  --card: #0b1016;
-  --border: rgba(255, 255, 255, 0.09);
-  --text: #e8eef6;
-  --muted: #8394a5;
+  --dark: #0d1318;
+  --card: #f6f8f9;
+  --surface-elevated: #ffffff;
+  --border: #e5e7eb;
+  --text: #0d1318;
+  --muted: #6b7280;
+  --modal-bg: #ffffff;
+  --input-bg: #f2f4f5;
+  --topbar-bg: rgba(255, 255, 255, 0.82);
+}
+[data-theme="dark"] {
+  --primary: var(--ac-aqua);
+  --primary-h: var(--ac-aqua-hover);
+  --primary-light: rgba(79, 248, 210, 0.12);
+  --primary-mid: rgba(79, 248, 210, 0.20);
+  --primary-border: rgba(79, 248, 210, 0.40);
+  --accent: var(--ac-aqua);
 
-  --modal-bg: #0c1219;
-  --input-bg: #0c1219;
-  --topbar-bg: rgba(5, 7, 10, 0.72);
-  --post-bg: #0b1016;
-  --surface-elevated: #0f151c;
+  --bg: #0d1318;
+  --black: #000000;
+  --dark: #0d1318;
+  --card: #152029;
+  --surface-elevated: #1a232b;
+  --border: #283945;
+  --text: #ffffff;
+  --muted: #8a97a1;
+  --modal-bg: #152029;
+  --input-bg: #152029;
+  --topbar-bg: rgba(13, 19, 24, 0.82);
 
-  --mine-bg: linear-gradient(135deg, rgba(47, 230, 168, 0.22), rgba(124, 92, 255, 0.22));
-  --mine-border: rgba(47, 230, 168, 0.22);
-  --their-bg: #0b1016;
-  --their-border: rgba(255, 255, 255, 0.07);
+  --post-bg: #152029;
+  --mine-bg: rgba(79, 248, 210, 0.14);
+  --mine-border: rgba(79, 248, 210, 0.30);
+  --their-bg: #152029;
+  --their-border: #283945;
 
-  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.5);
-  --shadow: 0 10px 30px rgba(0, 0, 0, 0.45);
-  --shadow-lg: 0 24px 60px rgba(0, 0, 0, 0.6);
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4);
+  --shadow: 0 6px 20px rgba(0, 0, 0, 0.35);
+  --shadow-lg: 0 18px 50px rgba(0, 0, 0, 0.5);
 }
 
-::selection { background: rgba(47, 230, 168, 0.28); color: #fff; }
-
-/* ============================================================
-   Page canvas — dot grid + corner aurora glows (theme-aware)
-   ============================================================ */
+/* ---------- base ---------- */
 body.page-video,
 body.page-short {
-  background-color: #f6f8fa;
-  background-image:
-    radial-gradient(60% 44% at 10% -6%, rgba(15, 155, 116, 0.10), transparent 62%),
-    radial-gradient(52% 46% at 104% 108%, rgba(124, 92, 255, 0.10), transparent 58%),
-    radial-gradient(rgba(0, 0, 0, 0.04) 1px, transparent 1.4px);
-  background-size: 100% 100%, 100% 100%, 22px 22px;
-  background-attachment: fixed, fixed, fixed;
+  font-family: 'Inter', 'El Messiri', system-ui, -apple-system, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  letter-spacing: -0.005em;
 }
-[data-theme="dark"] body.page-video,
-[data-theme="dark"] body.page-short {
-  background-color: #05070a;
+body.page-video {
+  background-color: var(--bg);
   background-image:
-    radial-gradient(60% 44% at 10% -6%, rgba(47, 230, 168, 0.14), transparent 62%),
-    radial-gradient(52% 46% at 104% 108%, rgba(124, 92, 255, 0.14), transparent 58%),
-    radial-gradient(rgba(255, 255, 255, 0.035) 1px, transparent 1.4px);
+    radial-gradient(rgba(255, 255, 255, 0.028) 1px, transparent 1.2px);
+  background-size: 22px 22px;
+  background-attachment: fixed;
 }
-body.page-short,
-[data-theme="dark"] body.page-short { background-attachment: scroll, scroll, scroll; }
+:root:not([data-theme="dark"]) body.page-video {
+  background-image: radial-gradient(rgba(13, 19, 24, 0.045) 1px, transparent 1.2px);
+}
+body.page-video .vg-sub,
+body.page-video .video-watch-date,
+body.page-video .vun-sub,
+body.page-video .shorts-shelf-badge,
+body.page-short .reel-act-count,
+body.page-video .vg-count {
+  font-family: 'Geist Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+  letter-spacing: 0;
+}
+::selection { background: rgba(79, 248, 210, 0.30); color: var(--ac-ink); }
 
-/* Thin themed scrollbars (webkit) */
 body.page-video ::-webkit-scrollbar { width: 10px; height: 10px; }
 body.page-video ::-webkit-scrollbar-thumb {
-  background: rgba(128, 128, 128, 0.35); border-radius: 999px;
+  background: var(--border); border-radius: 999px;
   border: 2px solid transparent; background-clip: padding-box;
 }
-body.page-video ::-webkit-scrollbar-thumb:hover { background: rgba(47, 230, 168, 0.5); background-clip: padding-box; }
+body.page-video ::-webkit-scrollbar-thumb:hover { background: var(--ac-aqua); background-clip: padding-box; }
 
 /* ============================================================
-   Topbar — frosted glass with hairline (theme-aware bg)
+   Topbar — flat, bordered, Turso nav
    ============================================================ */
 body.page-video .topbar {
-  height: 62px;
+  height: 60px;
   background: var(--topbar-bg);
   border-bottom: 1px solid var(--border);
-  backdrop-filter: blur(20px) saturate(1.4);
-  -webkit-backdrop-filter: blur(20px) saturate(1.4);
-}
-body.page-video .topbar::after {
-  content: ""; position: absolute; left: 0; right: 0; bottom: -1px; height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(47, 230, 168, 0.5), rgba(124, 92, 255, 0.4), transparent);
-  opacity: 0.7;
+  backdrop-filter: blur(16px) saturate(1.2);
+  -webkit-backdrop-filter: blur(16px) saturate(1.2);
 }
 body.page-video .back-btn,
 body.page-video .icon-btn {
+  width: 36px; height: 36px; border-radius: 999px;
   border: 1px solid var(--border);
-  background: var(--primary-light);
+  background: transparent;
   color: var(--text);
   transition: all var(--transition-fast);
 }
 body.page-video .back-btn:hover,
 body.page-video .icon-btn:hover {
-  border-color: var(--primary-border);
-  background: var(--primary-light);
-  color: var(--primary);
-  box-shadow: 0 0 0 4px rgba(47, 230, 168, 0.06);
+  border-color: var(--ac-aqua);
+  color: var(--ac-aqua);
+  background: rgba(79, 248, 210, 0.08);
 }
-[data-theme="dark"] body.page-video .brand-logo { filter: drop-shadow(0 0 12px rgba(47, 230, 168, 0.25)); }
+[data-theme="dark"] body.page-video .brand-logo { filter: none; }
 
 /* ============================================================
-   Feed tabs — segmented pill control
+   Feed tabs — Turso pill nav
    ============================================================ */
 body.page-video .feed-tabs {
-  display: inline-flex; gap: 4px; padding: 5px; margin-bottom: 22px;
-  background: rgba(128, 128, 128, 0.08);
-  border: 1px solid var(--border);
-  border-radius: 999px;
-  backdrop-filter: blur(8px);
-  max-width: 100%;
+  display: inline-flex; gap: 6px; padding: 4px; margin-bottom: 24px;
+  overflow: visible; border: 1px solid var(--border); border-radius: 999px;
+  background: var(--card);
 }
 body.page-video .feed-tab {
-  padding: 8px 20px; border-radius: 999px; border: 1px solid transparent;
-  background: transparent; color: var(--muted); font-weight: 700; font-size: 0.85rem;
-  transition: all var(--transition-fast);
+  padding: 8px 18px; border-radius: 999px; border: 1px solid transparent;
+  background: transparent; color: var(--muted);
+  font-weight: 600; font-size: 0.85rem; transition: all var(--transition-fast);
 }
-body.page-video .feed-tab:hover { color: var(--text); background: rgba(128, 128, 128, 0.12); }
+body.page-video .feed-tab:hover { color: var(--text); background: rgba(128, 148, 163, 0.12); }
 body.page-video .feed-tab.active {
-  background: var(--ac-gradient); border-color: transparent;
-  color: #04120d;
-  box-shadow: 0 6px 20px -6px rgba(47, 230, 168, 0.6), inset 0 0 0 1px rgba(255, 255, 255, 0.2);
+  background: var(--ac-aqua); border-color: var(--ac-aqua);
+  color: var(--ac-ink);
 }
-body.page-video .feed-tab.active svg { color: #04120d; }
+body.page-video .feed-tab.active svg { color: var(--ac-ink); }
 
 /* ============================================================
-   Video grid cards
+   Video grid
    ============================================================ */
-body.page-video .video-grid { gap: 26px 18px; }
+body.page-video .video-page-wrap { max-width: 1120px; padding: 26px 20px 72px; }
+body.page-video .video-grid { gap: 30px 20px; }
 body.page-video .vg-card { transition: transform var(--transition-base); }
-body.page-video .vg-card:hover { transform: translateY(-4px); }
+body.page-video .vg-card:hover { transform: translateY(-3px); }
 body.page-video .vg-thumb-wrap {
-  border-radius: 16px;
-  border: 1px solid var(--border);
-  box-shadow: 0 10px 30px -14px rgba(0, 0, 0, 0.55);
-  transition: border-color var(--transition-base), box-shadow var(--transition-base);
+  border-radius: 14px; border: 1px solid var(--border);
+  box-shadow: none; transition: border-color var(--transition-base), box-shadow var(--transition-base);
 }
 body.page-video .vg-card:hover .vg-thumb-wrap {
-  border-color: var(--primary-border);
-  box-shadow: 0 22px 50px -18px rgba(47, 230, 168, 0.35), 0 0 0 1px var(--primary-border);
+  border-color: var(--ac-aqua);
+  box-shadow: 0 0 0 1px var(--ac-aqua), 0 14px 34px -18px rgba(79, 248, 210, 0.55);
 }
 body.page-video .vg-play svg {
-  width: 58px; height: 58px; padding: 16px; border-radius: 999px;
-  background: rgba(6, 9, 13, 0.55); border: 1px solid rgba(47, 230, 168, 0.5);
-  backdrop-filter: blur(6px); box-shadow: 0 8px 24px -8px rgba(47, 230, 168, 0.7);
+  width: 56px; height: 56px; padding: 16px; border-radius: 999px;
+  background: rgba(13, 19, 24, 0.6); border: 1px solid rgba(79, 248, 210, 0.6);
+  backdrop-filter: blur(6px); color: var(--ac-aqua);
 }
-body.page-video .vg-title { font-weight: 700; letter-spacing: 0.1px; }
-body.page-video .vg-avatar { box-shadow: 0 0 0 1px var(--border); }
-body.page-video .vg-sub .dot { background: var(--primary); }
+body.page-video .vg-title { font-weight: 600; font-size: 0.92rem; }
+body.page-video .vg-avatar { background: var(--avatar-gradient); color: var(--ac-ink); }
+body.page-video .vg-sub { font-size: 0.74rem; color: var(--muted); }
+body.page-video .vg-sub .dot { background: var(--border); }
 
 /* ============================================================
    Shorts shelf
    ============================================================ */
-body.page-video .shorts-shelf-head { font-weight: 700; letter-spacing: 0.3px; }
-body.page-video .shorts-shelf-head svg { color: var(--primary); filter: drop-shadow(0 0 8px rgba(47, 230, 168, 0.5)); }
+body.page-video .shorts-shelf-head { font-weight: 600; font-size: 1rem; }
+body.page-video .shorts-shelf-head svg { color: var(--ac-aqua); }
 body.page-video .shorts-shelf-thumb-wrap {
-  border: 1px solid var(--border); border-radius: 16px;
+  border-radius: 14px; border: 1px solid var(--border); box-shadow: none;
   transition: transform var(--transition-base), border-color var(--transition-base), box-shadow var(--transition-base);
 }
 body.page-video .shorts-shelf-card:hover .shorts-shelf-thumb-wrap {
-  transform: translateY(-4px); border-color: var(--primary-border);
-  box-shadow: 0 18px 40px -16px rgba(124, 92, 255, 0.4);
+  transform: translateY(-3px); border-color: var(--ac-aqua);
+  box-shadow: 0 0 0 1px var(--ac-aqua), 0 14px 34px -18px rgba(79, 248, 210, 0.5);
 }
 body.page-video .shorts-shelf-badge {
-  background: rgba(6, 9, 13, 0.6); border: 1px solid rgba(255, 255, 255, 0.12);
-  color: var(--ac-1);
+  background: rgba(13, 19, 24, 0.7); border: 1px solid rgba(79, 248, 210, 0.45);
+  color: var(--ac-aqua); font-weight: 500;
 }
+body.page-video .shorts-shelf-title { font-weight: 600; }
 
 /* ============================================================
    Watch page
    ============================================================ */
 body.page-video .video-player-wrap {
-  border: 1px solid var(--border); border-radius: 20px;
-  box-shadow: 0 30px 80px -30px rgba(47, 230, 168, 0.25), 0 0 0 1px var(--border);
+  border: 1px solid var(--border); border-radius: 16px; box-shadow: var(--shadow);
 }
-body.page-video .video-player { border-radius: 19px; }
-body.page-video .video-watch-title { font-size: 1.22rem; letter-spacing: 0.1px; }
-body.page-video .video-watch-avatar { box-shadow: 0 0 0 2px rgba(47, 230, 168, 0.35); }
-body.page-video .video-watch-name:hover { color: var(--primary); }
+body.page-video .video-player { border-radius: 15px; }
+body.page-video .video-watch-title { font-weight: 700; font-size: 1.2rem; }
+body.page-video .video-watch-name { font-weight: 600; }
+body.page-video .video-watch-name:hover { color: var(--ac-aqua); }
+body.page-video .video-watch-avatar { background: var(--avatar-gradient); color: var(--ac-ink); }
 body.page-video .video-watch-desc {
-  background: rgba(128, 128, 128, 0.05);
-  border: 1px solid var(--border); border-radius: 16px;
+  background: var(--card); border: 1px solid var(--border); border-radius: 14px;
 }
 body.page-video .vw-action-btn {
-  border: 1px solid var(--border);
-  background: rgba(128, 128, 128, 0.08);
+  border-radius: 999px; border: 1px solid var(--border);
+  background: transparent; color: var(--text); font-weight: 600;
   transition: all var(--transition-fast);
 }
 body.page-video .vw-action-btn:hover {
-  border-color: var(--primary-border); background: var(--primary-light); color: var(--primary);
+  border-color: var(--ac-aqua); background: rgba(79, 248, 210, 0.10); color: var(--ac-aqua);
 }
 body.page-video .vw-action-btn.active {
-  border-color: var(--primary-border);
-  background: var(--primary-light); color: var(--primary);
-  box-shadow: 0 0 0 4px rgba(47, 230, 168, 0.06);
+  border-color: var(--ac-aqua); background: rgba(79, 248, 210, 0.14); color: var(--ac-aqua);
 }
 
-/* Up-next list */
-body.page-video .vun-thumb-wrap { border: 1px solid var(--border); border-radius: 12px; }
-body.page-video .vun-card { border-radius: 14px; padding: 6px; transition: background var(--transition-fast); }
-body.page-video .vun-card:hover { background: rgba(128, 128, 128, 0.10); }
+body.page-video .login-gate a {
+  background: var(--ac-aqua); color: var(--ac-ink); border-radius: 999px; font-weight: 600;
+}
+body.page-video .vc-up-next-title, body.page-video .video-comments-head { font-weight: 600; }
+body.page-video .vun-thumb-wrap { border-radius: 10px; border: 1px solid var(--border); }
+body.page-video .vun-card { border-radius: 12px; padding: 6px; transition: background var(--transition-fast); }
+body.page-video .vun-card:hover { background: rgba(128, 148, 163, 0.10); }
 
 /* ============================================================
    Comments
    ============================================================ */
 body.page-video .video-comment-input-row input {
-  background: var(--input-bg);
-  border: 1px solid var(--border);
+  background: var(--input-bg); border: 1px solid var(--border); border-radius: 999px;
   transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
 }
 body.page-video .video-comment-input-row input:focus {
-  border-color: var(--primary-border); box-shadow: 0 0 0 4px rgba(47, 230, 168, 0.08);
+  border-color: var(--ac-aqua); box-shadow: 0 0 0 3px rgba(79, 248, 210, 0.15);
 }
 body.page-video .video-comment-input-row button {
-  background: var(--ac-gradient); color: #04120d;
-  box-shadow: 0 8px 22px -8px rgba(47, 230, 168, 0.7);
+  background: var(--ac-aqua); color: var(--ac-ink);
 }
-body.page-video .comment .c-avatar { box-shadow: 0 0 0 1px var(--border); }
+body.page-video .comment .c-avatar { border: 1px solid var(--border); }
 
 /* ============================================================
-   Toast + loader (theme-aware surfaces)
+   Toast + loader
    ============================================================ */
 body.page-video .toast {
-  background: var(--surface-elevated, var(--card)); color: var(--text);
-  border: 1px solid var(--border); border-radius: 14px;
-  backdrop-filter: blur(14px);
-  box-shadow: var(--shadow-lg);
+  background: var(--surface-elevated); color: var(--text);
+  border: 1px solid var(--border); border-radius: 12px;
+  backdrop-filter: blur(12px); box-shadow: var(--shadow-lg);
   padding: 12px 20px 12px 18px;
 }
 body.page-video .toast::before {
-  content: ""; position: absolute; inset-inline-start: 0; top: 20%; bottom: 20%;
-  width: 3px; border-radius: 999px; background: var(--ac-gradient);
+  content: ""; position: absolute; inset-inline-start: 0; top: 18%; bottom: 18%;
+  width: 3px; border-radius: 999px; background: var(--ac-aqua);
 }
-body.page-video .toast.toast-error { border-color: rgba(255, 90, 80, 0.5); }
+body.page-video .toast.toast-error { border-color: var(--danger); }
 body.page-video .toast.toast-error::before { background: var(--danger); }
 body.page-video .spinner {
-  border: 3px solid rgba(128, 128, 128, 0.25);
-  border-top-color: var(--ac-1);
-  border-right-color: var(--ac-2);
+  border: 3px solid var(--border); border-top-color: var(--ac-aqua);
 }
 body.page-video .loader { background: var(--bg); }
 
 /* ============================================================
-   Shorts player page
+   Shorts player
    ============================================================ */
 body.page-short .reel-act-circle {
   background: rgba(255, 255, 255, 0.10);
-  border: 1px solid rgba(255, 255, 255, 0.14);
+  border: 1px solid rgba(255, 255, 255, 0.16);
 }
-body.page-short .reel-act-btn.liked .reel-act-circle {
-  background: rgba(47, 230, 168, 0.22); color: var(--ac-1);
-  border-color: rgba(47, 230, 168, 0.5);
+body.page-short .reel-act-btn.liked .reel-act-circle,
+body.page-short .reel-act-btn.save-btn.saved .reel-act-circle {
+  background: rgba(79, 248, 210, 0.22); color: var(--ac-aqua);
+  border-color: rgba(79, 248, 210, 0.55);
 }
-body.page-short .reel-act-btn.save-btn.saved .reel-act-circle { color: var(--ac-1); border-color: rgba(47, 230, 168, 0.5); }
-body.page-short .reel-avatar { box-shadow: 0 0 0 2px rgba(47, 230, 168, 0.5); }
-body.page-short .comments-sheet {
-  background: #0b1016; border-top: 1px solid rgba(255, 255, 255, 0.09);
-}
-body.page-short .comments-head { border-bottom: 1px solid rgba(255, 255, 255, 0.09); }
-body.page-short .comments-input-row { border-top: 1px solid rgba(255, 255, 255, 0.09); }
-body.page-short .comments-input-row input { background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.09); }
-body.page-short .comments-input-row button { background: var(--ac-gradient); color: #04120d; }
-body.page-short .reply-btn:hover { color: var(--ac-1); }
-body.page-short .spinner { border: 3px solid rgba(255, 255, 255, 0.14); border-top-color: var(--ac-1); border-right-color: var(--ac-2); }
+body.page-short .reel-avatar { box-shadow: 0 0 0 2px var(--ac-aqua); }
+body.page-short .reel-act-count { font-size: 0.72rem; }
+body.page-short .comments-sheet { background: #0d1318; border-top: 1px solid #283945; }
+body.page-short .comments-head { border-bottom: 1px solid #283945; }
+body.page-short .comments-input-row { border-top: 1px solid #283945; }
+body.page-short .comments-input-row input { background: #152029; border: 1px solid #283945; }
+body.page-short .comments-input-row button { background: var(--ac-aqua); color: var(--ac-ink); }
+body.page-short .reply-btn:hover { color: var(--ac-aqua); }
+body.page-short .spinner { border: 3px solid rgba(255, 255, 255, 0.16); border-top-color: var(--ac-aqua); }
 
 /* ============================================================
    Motion
    ============================================================ */
-@keyframes ac-rise { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes ac-rise { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
 body.page-video .video-grid > *,
-body.page-video .shorts-shelf-row { animation: ac-rise 0.45s cubic-bezier(0.16, 1, 0.3, 1) both; }
+body.page-video .shorts-shelf-row { animation: ac-rise 0.4s cubic-bezier(0.16, 1, 0.3, 1) both; }
 
 @media (prefers-reduced-motion: reduce) {
   body.page-video .vg-card,
