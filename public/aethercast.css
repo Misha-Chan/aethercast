@@ -52,23 +52,23 @@
   --primary-border: rgba(79, 248, 210, 0.40);
   --accent: var(--ac-aqua);
 
-  --bg: #0d1318;
+  --bg: #05070a;
   --black: #000000;
-  --dark: #0d1318;
-  --card: #152029;
-  --surface-elevated: #1a232b;
-  --border: #283945;
+  --dark: #05070a;
+  --card: #0c1014;
+  --surface-elevated: #11161c;
+  --border: #232c34;
   --text: #ffffff;
   --muted: #8a97a1;
-  --modal-bg: #152029;
-  --input-bg: #152029;
-  --topbar-bg: rgba(13, 19, 24, 0.82);
+  --modal-bg: #0c1014;
+  --input-bg: #0c1014;
+  --topbar-bg: rgba(5, 7, 10, 0.85);
 
-  --post-bg: #152029;
+  --post-bg: #0c1014;
   --mine-bg: rgba(79, 248, 210, 0.14);
   --mine-border: rgba(79, 248, 210, 0.30);
-  --their-bg: #152029;
-  --their-border: #283945;
+  --their-bg: #0c1014;
+  --their-border: #232c34;
 
   --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4);
   --shadow: 0 6px 20px rgba(0, 0, 0, 0.35);
@@ -174,7 +174,7 @@ body.page-video .vg-card:hover .vg-thumb-wrap {
 }
 body.page-video .vg-play svg {
   width: 56px; height: 56px; padding: 16px; border-radius: 999px;
-  background: rgba(13, 19, 24, 0.6); border: 1px solid rgba(79, 248, 210, 0.6);
+  background: rgba(5, 7, 10, 0.65); border: 1px solid rgba(79, 248, 210, 0.6);
   backdrop-filter: blur(6px); color: var(--ac-aqua);
 }
 body.page-video .vg-title { font-weight: 600; font-size: 0.92rem; }
@@ -196,7 +196,7 @@ body.page-video .shorts-shelf-card:hover .shorts-shelf-thumb-wrap {
   box-shadow: 0 0 0 1px var(--ac-aqua), 0 14px 34px -18px rgba(79, 248, 210, 0.5);
 }
 body.page-video .shorts-shelf-badge {
-  background: rgba(13, 19, 24, 0.7); border: 1px solid rgba(79, 248, 210, 0.45);
+  background: rgba(5, 7, 10, 0.72); border: 1px solid rgba(79, 248, 210, 0.45);
   color: var(--ac-aqua); font-weight: 500;
 }
 body.page-video .shorts-shelf-title { font-weight: 600; }
@@ -213,7 +213,7 @@ body.page-video .video-player { border-radius: 15px; }
 /* ---- Video.js skin → Turso aqua ---- */
 body.page-video .video-js { font-family: inherit; background: #000; }
 body.page-video .video-js .vjs-control-bar {
-  height: 3.4em; background: linear-gradient(to top, rgba(13, 19, 24, 0.95), rgba(13, 19, 24, 0.72));
+  height: 3.4em; background: linear-gradient(to top, rgba(5, 7, 10, 0.95), rgba(5, 7, 10, 0.72));
   backdrop-filter: blur(10px);
 }
 body.page-video .video-js .vjs-button > .vjs-icon-placeholder::before { color: #fff; }
@@ -315,10 +315,10 @@ body.page-short .reel-act-btn.save-btn.saved .reel-act-circle {
 }
 body.page-short .reel-avatar { box-shadow: 0 0 0 2px var(--ac-aqua); }
 body.page-short .reel-act-count { font-size: 0.72rem; }
-body.page-short .comments-sheet { background: #0d1318; border-top: 1px solid #283945; }
-body.page-short .comments-head { border-bottom: 1px solid #283945; }
-body.page-short .comments-input-row { border-top: 1px solid #283945; }
-body.page-short .comments-input-row input { background: #152029; border: 1px solid #283945; }
+body.page-short .comments-sheet { background: #05070a; border-top: 1px solid #232c34; }
+body.page-short .comments-head { border-bottom: 1px solid #232c34; }
+body.page-short .comments-input-row { border-top: 1px solid #232c34; }
+body.page-short .comments-input-row input { background: #0c1014; border: 1px solid #232c34; }
 body.page-short .comments-input-row button { background: var(--ac-aqua); color: var(--ac-ink); }
 body.page-short .reply-btn:hover { color: var(--ac-aqua); }
 body.page-short .spinner { border: 3px solid rgba(255, 255, 255, 0.16); border-top-color: var(--ac-aqua); }
