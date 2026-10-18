@@ -69,3 +69,15 @@ function setThemeIcon(html) {
   } catch (e) { /* التتبع لا يجب أن يكسر أي صفحة */ }
 })();
 
+/* تهريب قيمة نصية للاستخدام داخل سلسلة JS بسمة HTML (onclick مثلاً).
+ * esc() تُهرّب HTML لكن تُترك ' كما هي، ولأن قيمة onclick تُفكّ ترميز الـ HTML
+ * أولاً ثم تُحلّل كـ JS، فإن ' غير مهرّبة تسمح بكسر السلسلة وحقن كود. هذه الدالة
+ * تُهرّب للسياقين معاً: HTML (& < > ") ثم JS (\ ' والسطور الجديدة). */
+function escJs(s) {
+  var str = String(s == null ? '' : s);
+  return str
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;')
+    .replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/\r?\n/g, '\\n');
+}
+window.escJs = escJs;
+
