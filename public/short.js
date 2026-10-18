@@ -126,8 +126,9 @@ function reelSlideHtml(r){
 }
 
 function stripHtml(html){
-  const d = document.createElement('div'); d.innerHTML = html;
-  return (d.textContent || d.innerText || '').trim();
+  // DOMParser لا ينفّذ السكربتات/الأحداث ولا يحمّل الموارد — آمن لتحليل HTML غير موثوق.
+  try { return (new DOMParser().parseFromString(String(html||''), 'text/html').body.textContent || '').trim(); }
+  catch(e){ return String(html||'').replace(/<[^>]*>/g, '').trim(); }
 }
 
 async function loadReels(){
@@ -246,7 +247,7 @@ async function renderComments(){
       <div class="comment-avatar">${c.avatar ? `<img src="${esc(c.avatar)}" alt="">` : `<img src="/default-avatar.jpg" alt="">`}</div>
       <div style="flex:1;">
         <div class="comment-name">${esc(c.display_name || c.username)}
-          ${ME ? `<button class="reply-btn" onclick="startReplyTo(${c.id}, '${esc(c.username||'')}')">${t('replyWord')}</button>` : ''}
+          ${ME ? `<button class="reply-btn" onclick="startReplyTo(${c.id}, '${escJs(c.username||'')}')">${t('replyWord')}</button>` : ''}
         </div>
         <div class="comment-text">${esc(c.content)}</div>
         ${replies.length ? `<div class="replies-list">${replies.map(row).join('')}</div>` : ''}

@@ -175,8 +175,9 @@ function reelShelfCardHtml(r){
 }
 function goToShort(id){ window.location = '/short?id=' + id; }
 function stripHtmlV(html){
-  try { const d = document.createElement('div'); d.innerHTML = html||''; return d.textContent || d.innerText || ''; }
-  catch(e){ return html||''; }
+  // DOMParser لا ينفّذ السكربتات/الأحداث ولا يحمّل الموارد — آمن لتحليل HTML غير موثوق.
+  try { return (new DOMParser().parseFromString(String(html||''), 'text/html').body.textContent || '').trim(); }
+  catch(e){ return String(html||'').replace(/<[^>]*>/g, ''); }
 }
 
 function vunCardHtml(v){
