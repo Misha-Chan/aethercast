@@ -73,12 +73,35 @@
     let n;
     while ((n = walker.nextNode())) nodes.push(n);
     nodes.forEach(node => {
-      const span = document.createElement('span');
-      span.innerHTML = render(node.nodeValue);
+      // نبني العُقد يدوياً بدل innerHTML: قيمة عقدة النص قد تحتوي '<' أو '>'
+      // (الناتجة عن فك ترميز &lt;/&gt; عند إدراج المحتوى سابقاً)، فإعادة تحليلها
+      // عبر innerHTML كانت تسمح بتنفيذ HTML مخزّن (مثل <img onerror>). هنا نُدرج
+      // بقية النص عبر createTextNode ولا نُحلّل أي HTML إطلاقاً.
       const parent = node.parentNode;
       if (!parent) return;
-      while (span.firstChild) parent.insertBefore(span.firstChild, node);
-      parent.removeChild(node);
+      const text = String(node.nodeValue);
+      const frag = document.createDocumentFragment();
+      let last = 0, m;
+      glyphRegex.lastIndex = 0;
+      while ((m = glyphRegex.exec(text)) !== null) {
+        if (m.index > last) frag.appendChild(document.createTextNode(text.slice(last, m.index)));
+        const entry = glyphToEntry.get(m[0]);
+        if (entry && entry.color) {
+          const img = document.createElement('img');
+          img.src = assetUrl(entry.color);
+          img.alt = m[0];
+          img.title = entry.name || '';
+          img.className = 'femoji';
+          img.loading = 'lazy';
+          img.draggable = false;
+          frag.appendChild(img);
+        } else {
+          frag.appendChild(document.createTextNode(m[0]));
+        }
+        last = m.index + m[0].length;
+      }
+      if (last < text.length) frag.appendChild(document.createTextNode(text.slice(last)));
+      parent.replaceChild(frag, node);
     });
   }
 
