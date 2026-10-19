@@ -1,13 +1,12 @@
 {
   "name": "aethercast",
-  "version": "1.0.0",
-  "description": "aethercast.hostaka.fun — الفيديو والريلز، كمنتج مستقل تابع لهوستاكا",
+  "version": "2.0.0",
+  "description": "aethercast.hostaka.fun — discontinued. This deployment serves a notice page only.",
   "scripts": {
     "start": "node server.js",
     "dev": "node server.js"
   },
   "dependencies": {
-    "express": "^4.18.2",
-    "node-fetch": "^2.6.7"
+    "express": "^4.18.2"
   }
 }

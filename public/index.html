@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Aethercast has been discontinued</title>
+<style>
+  :root {
+    color-scheme: light;
+    --ink: #000;
+    --paper: #fff;
+    --mute: #555;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; min-height: 100%; }
+  body {
+    min-height: 100vh;
+    display: flex; align-items: center; justify-content: center;
+    padding: 28px 18px;
+    background-color: var(--paper);
+    background-image: repeating-linear-gradient(
+      0deg,
+      rgba(0, 0, 0, 0.045) 0 1px,
+      transparent 1px 4px
+    );
+    color: var(--ink);
+    font-family: "Courier New", ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+    font-size: 15px;
+    line-height: 1.7;
+    -webkit-font-smoothing: none;
+  }
+  .terminal {
+    width: 100%; max-width: 640px;
+    border: 2px solid var(--ink);
+    background: var(--paper);
+    box-shadow: 10px 10px 0 var(--ink);
+  }
+  .bar {
+    display: flex; align-items: center; justify-content: space-between; gap: 12px;
+    padding: 9px 14px;
+    background: var(--ink); color: var(--paper);
+    font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase;
+  }
+  .bar .tag { letter-spacing: 0.28em; }
+  .body { padding: 30px 26px 24px; }
+  .mark {
+    width: 56px; height: 56px; margin-bottom: 22px;
+    border: 2px solid var(--ink);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 30px; font-weight: 700; line-height: 1;
+    box-shadow: 3px 3px 0 var(--ink);
+    user-select: none;
+  }
+  .kicker {
+    margin: 0 0 8px;
+    font-size: 11px; letter-spacing: 0.22em; text-transform: uppercase;
+    color: var(--mute);
+  }
+  h1 {
+    margin: 0 0 16px;
+    font-size: clamp(1.25rem, 3.6vw, 1.9rem);
+    line-height: 1.25;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+  p { margin: 0 0 12px; }
+  strong { font-weight: 700; }
+  .actions { display: flex; flex-wrap: wrap; gap: 10px; margin: 26px 0 6px; }
+  a.btn {
+    display: inline-block; padding: 10px 16px;
+    border: 2px solid var(--ink);
+    font-family: inherit; font-size: 12px; font-weight: 700;
+    letter-spacing: 0.12em; text-transform: uppercase;
+    text-decoration: none;
+  }
+  a.primary { background: var(--ink); color: var(--paper); }
+  a.primary:hover, a.primary:focus-visible { background: var(--paper); color: var(--ink); }
+  a.ghost { background: var(--paper); color: var(--ink); }
+  a.ghost:hover, a.ghost:focus-visible { background: var(--ink); color: var(--paper); }
+  a.btn:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
+  .status {
+    margin-top: 24px; padding-top: 14px;
+    border-top: 1px dashed var(--ink);
+    font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase;
+  }
+  .cursor {
+    display: inline-block; width: 9px; height: 15px; margin-left: 5px;
+    background: var(--ink); vertical-align: -2px;
+    animation: blink 1.05s steps(1) infinite;
+  }
+  @keyframes blink { 50% { opacity: 0; } }
+  footer { margin-top: 18px; font-size: 11px; color: var(--mute); letter-spacing: 0.06em; }
+  @media (max-width: 420px) {
+    .body { padding: 22px 18px 20px; }
+    .terminal { box-shadow: 6px 6px 0 var(--ink); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .cursor { animation: none; }
+  }
+</style>
+</head>
+<body>
+  <main class="terminal">
+    <div class="bar">
+      <span>system://aethercast</span>
+      <span class="tag">[ OFFLINE ]</span>
+    </div>
+    <div class="body">
+      <div class="mark" aria-hidden="true">a</div>
+      <p class="kicker">Service notice</p>
+      <h1>Aethercast has been discontinued</h1>
+      <p>The Aethercast video and reels service is no longer available.</p>
+      <p>Reels and videos are now part of <strong>Hostaka</strong> — watch them directly inside posts, or browse them on Hostaka.</p>
+      <div class="actions">
+        <a class="btn primary" href="https://hostaka.fun/">Go to Hostaka</a>
+        <a class="btn ghost" href="https://hostaka.fun/short">Watch Reels</a>
+        <a class="btn ghost" href="https://hostaka.fun/video">Browse Videos</a>
+      </div>
+      <div class="status">Status: discontinued<span class="cursor" aria-hidden="true"></span></div>
+      <footer>Old Aethercast links will keep showing this notice.</footer>
+    </div>
+  </main>
+</body>
+</html>

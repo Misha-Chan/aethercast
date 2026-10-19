@@ -1,113 +1,23 @@
-# aethercast
+# aethercast — discontinued
 
-نطاق مستقل (`aethercast.hostaka.fun`) يخدّم فقط صفحتي الفيديو والشورتس
-من هوستاكا — منصة فيديو مدمجة (فيديوهات طويلة + شورتس بنفس الفيد،
-زي يوتيوب ويوتيوب شورتس) بستايل هوستاكا، بمستودعها وسيرفرها الخاص.
+Aethercast (`aethercast.hostaka.fun`) has been shut down.
 
-## البنية
+Reels and videos now live inside **Hostaka**:
 
-نفس نمط `orbithub` بالضبط — سيرفر Express حقيقي + بروكسي شفاف لـ `/api/*`:
+- Reels: <https://hostaka.fun/short>
+- Videos: <https://hostaka.fun/video>
 
-```
-aethercast/
-├── server.js
-├── package.json
-├── vercel.json
-├── .env.example
-└── public/
-    ├── video.html / video.css / video.js   ← الفيد الرئيسي + مشغّل الفيديو
-    ├── short.html / short.css / short.js   ← مشغّل الشورتس (سحب عمودي)
-    ├── theme.css / shared.css / shared.js
-    ├── emoji.css / emoji.js / emoji-catalog.json
-    ├── i18n.js / modal.js / protect.js
-    ├── translations/ar.json / en.json
-    └── aethercast-light.png / aethercast-dark.png / aethercast-icon.png
-```
+This repository only deploys a small Express server that returns an English
+notice page with HTTP `410 Gone` for every path (`public/index.html`).
 
-كل منطق المصادقة وقاعدة البيانات يبقى على السيرفر الرئيسي (`hostaka.fun`).
+---
 
-## الفيد المدمج (فيديوهات + شورتس معاً)
+## aethercast — متوقف
 
-`video.js` صار يجيب `/api/videos` و`/api/reels` بالتوازي (كلاهما موجود
-مسبقاً بالسيرفر الرئيسي، ومبنيّان على نفس جدول `records` بعمود
-`is_reel` يفرّق بينهم). الفيد الرئيسي (`renderCombinedFeed`) يعرض:
+تم إيقاف خدمة aethercast. الريلز والفيديوهات انتقلت إلى **Hostaka**:
 
-- **تبويبات أعلى الفيد:** الكل / فيديوهات / شورتس — بالضغط على "شورتس"
-  ينقلك لمشغّل الشورتس الكامل (سحب عمودي، تجربة كاملة الشاشة).
-- **وضع "الكل" (الافتراضي):** فيديوهات عادية بشبكة أفقية (نفس تصميم
-  يوتيوب)، وبينها **"رف شورتس"** (تمرير أفقي لبطاقات عمودية 9:16) كل 4
-  بطاقات فيديو — بالضبط نفس نمط الصفحة الرئيسية بيوتيوب.
-- الضغط على بطاقة فيديو عادية → يفتح صفحة المشاهدة بداخل نفس الصفحة.
-- الضغط على بطاقة شورتس بالرف → يوديك مباشرة لمشغّل الشورتس الكامل
-  (`/short?id=...`) عند ذاك الفيديو بالذات.
+- الريلز: <https://hostaka.fun/short>
+- الفيديوهات: <https://hostaka.fun/video>
 
-## اختبار محلي
-
-```bash
-npm install
-npm start
-# افتح http://localhost:3000
-```
-
-## النشر على Vercel
-
-1. مشروع Vercel جديد من هذا المستودع.
-2. أضف دومين `aethercast.hostaka.fun` من Settings → Domains.
-3. أضف سجل `CNAME` باسم `aethercast` بـ DNS حق `hostaka.fun` يشاور على
-   القيمة اللي يعطيك ياها Vercel.
-
-## متغيرات البيئة على Vercel
-
-| المتغير | مطلوب؟ | القيمة |
-|---|---|---|
-| `HOSTAKA_API_BASE` | ❌ اختياري | `https://hostaka.fun` (افتراضية بالكود أصلاً) |
-| `RATE_LIMIT_MAX` | ❌ اختياري | `600` — أقصى طلبات لكل IP بالدقيقة على `/api/*` |
-
-## آلية تمرير تسجيل الدخول بين النطاقين
-
-**الحل الأساسي: oauth.hostaka.fun (وسيط تحقق مركزي).** `video.js`/
-`short.js` يسألون بصمت `https://oauth.hostaka.fun/api/token`
-(`credentials:'include'`) أول ما تفتح الصفحة، لو ما فيه توكن محلي —
-كوكي مشترك (`Domain=.hostaka.fun`) يتخزّن فور كل تسجيل دخول ناجح
-بالموقع الرئيسي، فيرجع تلقائياً هنا بدون أي رابط خاص. شوف مستودع
-`oauth` للتفاصيل.
-
-**الحل الاحتياطي (fallback):** لو oauth ما رجّع شي، تبقى نفس آلية
-`orbithub` (تمرير بالرابط):
-
-- **بالمستودع الرئيسي:** `/video` و`/short` صارا صفحتي تحويل خفيفتين
-  تقرأ التوكن من localStorage وتحوّل المستخدم لـ aethercast مع التوكن
-  (وتحافظ على أي query string مثل `?id=`). **كل الروابط الداخلية
-  القديمة تشتغل تلقائياً بدون تعديل.**
-- **بهذا المستودع:** `video.js`/`short.js` يلتقطون `?token=` أول تحميل،
-  يخزّنونه محلياً، ويمسحونه من شريط العنوان.
-- **ما فيه توكن إطلاقاً:** يوديك لـ `hostaka.fun/login?next=...`،
-  ويرجّعك هنا صح بعد الدخول (تم إصلاح Bug كان يتجاهل `?next=`).
-
-**⚠️ لازم تنشر تحديث `/video` و`/short` + oauth.hostaka.fun شغّال قبل
-تفعيل aethercast.**
-
-## معاينات الروابط (Open Graph)
-
-بما إن الفيديو محتوى عام، السيرفر يبني وسوم Open Graph بنفسه لكل رابط
-فيديو/شورت (`aethercast.hostaka.fun/video?id=123`):
-
-- عند الطلب، `server.js` يسأل السيرفر الرئيسي عن السجل عبر
-  `GET /api/records/:id/single` (طلب سيرفر-لسيرفر، ما له علاقة بالبروكسي
-  حق المتصفح ولا يحتاج توكن للمنشورات العامة).
-- يبني منها: `og:title` (اسم الناشر + aethercast)، `og:description`
-  (مقتطف من النص)، `og:image` (المصغّرة إن وُجدت)، و`og:video` +
-  `twitter:card=player` لو فيه فيديو — فتطلع معاينة كاملة بواتساب/
-  تويتر/ديسكورد.
-- لو ما فيه `?id=` بالرابط (الصفحة الرئيسية)، أو تعذّر الوصول للسجل
-  لأي سبب، ترجع لميتاداتا افتراضية عامة (شعار aethercast + وصف عام)
-  بدون ما تكسر الصفحة.
-- هذا كله يصير **قبل** إرسال الصفحة، فبوتات المعاينة (اللي ما تنفّذ
-  جافاسكريبت) تشوف الميتا الصحيحة مباشرة بالـ `<head>`.
-
-## الشعار
-
-- `aethercast-light.png` — الثيم الفاتح (صفحة `/video`، كما هو).
-- `aethercast-dark.png` — نسخة بيضاء، تظهر تلقائياً بالثيم الداكن على
-  `/video`، وتُستخدم دائماً على `/short` (خلفية سوداء ثابتة بكل الأحوال).
-- `aethercast-icon.png` — الفافيكون (مقصوص من حرف الـ"a").
+هذا المستودع يحتوي فقط على سيرفر صغير يعيد صفحة إنجليزية بحالة `410 Gone`
+لكل المسارات.
